@@ -27,3 +27,4 @@ flask.log
 !templates/*.html
 !index.html
 http_server.log
+node_modules/

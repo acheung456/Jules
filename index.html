@@ -5,71 +5,263 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moncler Global Price Comparison</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 2rem; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1, h2 { text-align: center; }
-        form { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto 2rem auto; }
-        label { font-weight: bold; color: #555; }
-        select, button { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #000; color: white; cursor: pointer; border: none; font-weight: bold; }
-        button:hover { background-color: #333; }
+        :root {
+            --bg-dark: #121212;
+            --surface-dark: #1e1e1e;
+            --text-primary: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --accent-gold: #d4af37;
+            --border-color: #333333;
+        }
 
-        #results-container { display: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
-        th { background-color: #f4f4f4; color: #555; }
-        tr:hover { background-color: #f1f1f1; }
-        .cheapest { background-color: #e8f5e9; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50; border-radius: 4px; padding: 10px; margin-bottom: 20px; text-align: center; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-header {
+            text-align: center;
+            padding: 3rem 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-family: 'Didot', 'Bodoni MT', serif;
+            font-weight: 400;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin: 0 0 0.5rem 0;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        select {
+            appearance: none;
+            background-color: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus {
+            border-color: var(--accent-gold);
+        }
+
+        button {
+            background-color: var(--text-primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent-gold);
+            color: var(--bg-dark);
+        }
+
+        #results-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        #results-title {
+            font-family: 'Didot', serif;
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        #results-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .best-deal-card {
+            background: linear-gradient(145deg, #1f1f1f, #181818);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .best-deal-card h2 {
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 1rem 0;
+        }
+
+        .best-deal-card p {
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 300;
+            color: var(--text-primary);
+        }
+
+        .best-deal-card strong {
+            font-weight: 600;
+        }
+
+        /* Mobile-friendly table replacement: List Cards */
+        .result-card {
+            background-color: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .store-location {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .final-cost {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .result-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .value-green { color: #81c784; }
+        .value-red { color: #e57373; }
+        .value-primary { color: var(--text-primary); }
+
+        @media (min-width: 768px) {
+            .container { padding: 4rem 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
+    <header class="app-header">
+        <h1>Moncler</h1>
+        <div class="subtitle">Global Price Intelligence</div>
+    </header>
+
     <div class="container">
-        <h1>Global Price Comparison</h1>
-        <p style="text-align:center; color:#666;">Compare Moncler prices across regions based on your nationality to find the cheapest option (factoring in estimated VAT refunds and duties). <em>Runs fully client-side for GitHub Pages.</em></p>
+        <form id="compare-form" onsubmit="return false;">
+            <div class="form-group">
+                <label for="user_country">Your Residency</label>
+                <select id="user_country" name="user_country" required>
+                    <option value="US">United States (US)</option>
+                    <option value="IT">Italy (IT)</option>
+                    <option value="GB">United Kingdom (GB)</option>
+                    <option value="JP">Japan (JP)</option>
+                    <option value="FR">France (FR)</option>
+                    <option value="DE">Germany (DE)</option>
+                </select>
+            </div>
 
-        <form id="compare-form">
-            <label for="user_country">Your Nationality / Home Country:</label>
-            <select id="user_country" name="user_country" required>
-                <option value="US">US (United States)</option>
-                <option value="IT">IT (Italy)</option>
-                <option value="GB">GB (United Kingdom)</option>
-                <option value="JP">JP (Japan)</option>
-                <option value="FR">FR (France)</option>
-                <option value="DE">DE (Germany)</option>
-            </select>
+            <div class="form-group">
+                <label for="product_name">Select Piece</label>
+                <select id="product_name" name="product_name" required>
+                    <option value="Maya Short Down Jacket">Maya Short Down Jacket</option>
+                    <option value="Bormes Gilet">Bormes Gilet</option>
+                </select>
+            </div>
 
-            <label for="product_name">Select Product:</label>
-            <select id="product_name" name="product_name" required>
-                <option value="Maya Short Down Jacket">Maya Short Down Jacket</option>
-                <option value="Bormes Gilet">Bormes Gilet</option>
-            </select>
-
-            <button type="submit">Compare Prices</button>
+            <button type="submit">Compare Intelligence</button>
         </form>
 
         <div id="results-container">
-            <h2 id="results-title"></h2>
-            <p style="text-align: center; color: #777;" id="results-subtitle"></p>
+            <div class="results-header">
+                <h2 id="results-title"></h2>
+                <div id="results-subtitle"></div>
+            </div>
 
-            <div class="cheapest" id="best-deal">
+            <div class="best-deal-card" id="best-deal">
                 <!-- Best deal populated here -->
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Store Location</th>
-                        <th>Local Price</th>
-                        <th id="th-converted-base">Converted Base</th>
-                        <th id="th-tax-refund">Est. Tax Refund</th>
-                        <th id="th-import-duty">Est. Import Duty</th>
-                        <th id="th-final-cost">Final Cost</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body">
-                    <!-- Table rows populated here -->
-                </tbody>
-            </table>
+            <div id="results-body">
+                <!-- Mobile-friendly cards populated here -->
+            </div>
         </div>
     </div>
 
@@ -174,37 +366,51 @@
             resultsData.sort((a, b) => a.final_price_num - b.final_price_num);
 
             // Update UI
-            document.getElementById('results-title').textContent = `Price Comparison for ${productName}`;
-            document.getElementById('results-subtitle').innerHTML = `Your Country: <strong>${userCountry}</strong> | Display Currency: <strong>${userCurrency}</strong>`;
+            document.getElementById('results-title').textContent = productName;
+            document.getElementById('results-subtitle').innerHTML = `Refined for <strong>${userCountry}</strong> | ${userCurrency}`;
 
             const cheapest = resultsData[0];
             document.getElementById('best-deal').innerHTML = `
-                <h2>🏆 Best Deal Found 🏆</h2>
-                <p>Buy in <strong>${cheapest.product_country}</strong> for an estimated final cost of <strong>${userCurrency} ${cheapest.final_price}</strong></p>
+                <h2>Top Recommendation</h2>
+                <p>Acquire in <strong>${cheapest.product_country}</strong> for <strong>${userCurrency} ${cheapest.final_price}</strong></p>
             `;
-
-            document.getElementById('th-converted-base').textContent = `Converted Base (${userCurrency})`;
-            document.getElementById('th-tax-refund').textContent = `Est. Tax Refund (${userCurrency})`;
-            document.getElementById('th-import-duty').textContent = `Est. Import Duty (${userCurrency})`;
-            document.getElementById('th-final-cost').textContent = `Final Cost (${userCurrency})`;
 
             const tbody = document.getElementById('results-body');
             tbody.innerHTML = '';
 
             resultsData.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${item.product_country}</td>
-                    <td>${item.original_price} ${item.product_currency}</td>
-                    <td>${item.base_price_converted}</td>
-                    <td style="color: green;">-${item.tax_refund}</td>
-                    <td style="color: red;">+${item.import_duty}</td>
-                    <td><strong>${item.final_price}</strong></td>
+                // Generate a mobile-friendly luxury card for each result instead of a row
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.innerHTML = `
+                    <div class="result-card-header">
+                        <span class="store-location">${item.product_country} Boutique</span>
+                        <span class="final-cost">${item.final_price} ${userCurrency}</span>
+                    </div>
+                    <div class="result-detail-row">
+                        <span class="detail-label">Local Price</span>
+                        <span class="detail-value value-primary">${item.original_price} ${item.product_currency}</span>
+                    </div>
+                    <div class="result-detail-row">
+                        <span class="detail-label">Converted Base</span>
+                        <span class="detail-value value-primary">${item.base_price_converted} ${userCurrency}</span>
+                    </div>
+                    <div class="result-detail-row">
+                        <span class="detail-label">Est. Tax Refund</span>
+                        <span class="detail-value value-green">-${item.tax_refund} ${userCurrency}</span>
+                    </div>
+                    <div class="result-detail-row">
+                        <span class="detail-label">Est. Import Duty</span>
+                        <span class="detail-value ${parseFloat(item.import_duty) > 0 ? 'value-red' : 'value-primary'}">+${item.import_duty} ${userCurrency}</span>
+                    </div>
                 `;
-                tbody.appendChild(tr);
+                tbody.appendChild(card);
             });
 
             document.getElementById('results-container').style.display = 'block';
+
+            // Smooth scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>
