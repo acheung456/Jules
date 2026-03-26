@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison Results: {{ product_name }}</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
+        th { background-color: #f4f4f4; color: #555; }
+        tr:hover { background-color: #f1f1f1; }
+        .cheapest { background-color: #e8f5e9; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50; border-radius: 4px; padding: 10px; margin-bottom: 20px; text-align: center; }
+        .btn-back { display: inline-block; padding: 10px 15px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; margin-top: 20px; font-weight: bold; text-align: center;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Price Comparison for {{ product_name }}</h1>
+        <p style="text-align: center; color: #777;">Your Country: <strong>{{ user_country }}</strong> | Display Currency: <strong>{{ user_currency }}</strong></p>
+
+        <div class="cheapest">
+            <h2>🏆 Best Deal Found 🏆</h2>
+            <p>Buy in <strong>{{ cheapest.product_country }}</strong> for an estimated final cost of <strong>{{ user_currency }} {{ cheapest.final_price }}</strong></p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Store Location</th>
+                    <th>Local Price</th>
+                    <th>Converted Base ({{ user_currency }})</th>
+                    <th>Est. Tax Refund ({{ user_currency }})</th>
+                    <th>Est. Import Duty ({{ user_currency }})</th>
+                    <th>Final Cost ({{ user_currency }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in results %}
+                <tr>
+                    <td>{{ item.product_country }}</td>
+                    <td>{{ item.original_price }} {{ item.product_currency }}</td>
+                    <td>{{ item.base_price_converted }}</td>
+                    <td style="color: green;">-{{ item.tax_refund }}</td>
+                    <td style="color: red;">+{{ item.import_duty }}</td>
+                    <td><strong>{{ item.final_price }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-back">← Back to Search</a>
+        </div>
+    </div>
+</body>
+</html>

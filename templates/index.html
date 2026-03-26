@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moncler Global Price Comparison</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 2rem; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; text-align: center; color: #333; }
+        form { display: flex; flex-direction: column; gap: 1rem; }
+        label { font-weight: bold; color: #555; }
+        select, button { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #000; color: white; cursor: pointer; border: none; font-weight: bold; }
+        button:hover { background-color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Global Price Comparison</h1>
+        <p style="text-align:center; color:#666;">Compare Moncler prices across regions based on your nationality to find the cheapest option (factoring in estimated VAT refunds and duties).</p>
+
+        <form action="/results" method="GET">
+            <label for="user_country">Your Nationality / Home Country:</label>
+            <select id="user_country" name="user_country" required>
+                {% for country in countries %}
+                <option value="{{ country }}">{{ country }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="product_name">Select Product:</label>
+            <select id="product_name" name="product_name" required>
+                {% for product in products %}
+                <option value="{{ product }}">{{ product }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Compare Prices</button>
+        </form>
+    </div>
+</body>
+</html>
