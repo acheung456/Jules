@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moncler Global Price Comparison</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 2rem; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto 2rem auto; }
+        label { font-weight: bold; color: #555; }
+        select, button { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #000; color: white; cursor: pointer; border: none; font-weight: bold; }
+        button:hover { background-color: #333; }
+
+        #results-container { display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
+        th { background-color: #f4f4f4; color: #555; }
+        tr:hover { background-color: #f1f1f1; }
+        .cheapest { background-color: #e8f5e9; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50; border-radius: 4px; padding: 10px; margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Global Price Comparison</h1>
+        <p style="text-align:center; color:#666;">Compare Moncler prices across regions based on your nationality to find the cheapest option (factoring in estimated VAT refunds and duties). <em>Runs fully client-side for GitHub Pages.</em></p>
+
+        <form id="compare-form">
+            <label for="user_country">Your Nationality / Home Country:</label>
+            <select id="user_country" name="user_country" required>
+                <option value="US">US (United States)</option>
+                <option value="IT">IT (Italy)</option>
+                <option value="GB">GB (United Kingdom)</option>
+                <option value="JP">JP (Japan)</option>
+                <option value="FR">FR (France)</option>
+                <option value="DE">DE (Germany)</option>
+            </select>
+
+            <label for="product_name">Select Product:</label>
+            <select id="product_name" name="product_name" required>
+                <option value="Maya Short Down Jacket">Maya Short Down Jacket</option>
+                <option value="Bormes Gilet">Bormes Gilet</option>
+            </select>
+
+            <button type="submit">Compare Prices</button>
+        </form>
+
+        <div id="results-container">
+            <h2 id="results-title"></h2>
+            <p style="text-align: center; color: #777;" id="results-subtitle"></p>
+
+            <div class="cheapest" id="best-deal">
+                <!-- Best deal populated here -->
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Store Location</th>
+                        <th>Local Price</th>
+                        <th id="th-converted-base">Converted Base</th>
+                        <th id="th-tax-refund">Est. Tax Refund</th>
+                        <th id="th-import-duty">Est. Import Duty</th>
+                        <th id="th-final-cost">Final Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <!-- Table rows populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Mock Database
+        const mockData = [
+            { product_name: "Maya Short Down Jacket", country: "US", currency: "USD", price: 1850.00 },
+            { product_name: "Maya Short Down Jacket", country: "IT", currency: "EUR", price: 1250.00 },
+            { product_name: "Maya Short Down Jacket", country: "GB", currency: "GBP", price: 1150.00 },
+            { product_name: "Maya Short Down Jacket", country: "JP", currency: "JPY", price: 240000.00 },
+            { product_name: "Bormes Gilet", country: "US", currency: "USD", price: 1200.00 },
+            { product_name: "Bormes Gilet", country: "IT", currency: "EUR", price: 850.00 },
+            { product_name: "Bormes Gilet", country: "GB", currency: "GBP", price: 790.00 }
+        ];
+
+        // Currency Mapping & Exchange Rates
+        const COUNTRY_CURRENCY_MAP = {
+            "US": "USD", "IT": "EUR", "GB": "GBP", "JP": "JPY", "FR": "EUR", "DE": "EUR"
+        };
+        const EXCHANGE_RATES = {
+            "USD": 1.0, "EUR": 1.08, "GBP": 1.26, "JPY": 0.0067
+        };
+
+        function getExchangeRate(fromCurrency, toCurrency) {
+            if (fromCurrency === toCurrency) return 1.0;
+            const rateToUsd = EXCHANGE_RATES[fromCurrency];
+            const toRate = EXCHANGE_RATES[toCurrency];
+            if (!rateToUsd || !toRate) return 1.0; // fallback
+            const rateFromUsd = 1 / toRate;
+            return rateToUsd * rateFromUsd;
+        }
+
+        function convertCurrency(amount, fromCurrency, toCurrency) {
+            const rate = getExchangeRate(fromCurrency, toCurrency);
+            return amount * rate;
+        }
+
+        function calculateAdjustedPrice(basePrice, productCountry, userCountry, priceCurrency, userCurrency) {
+            const priceInUsd = convertCurrency(basePrice, priceCurrency, "USD");
+
+            let refundPct = 0.0;
+            let dutyPct = 0.0;
+
+            if (userCountry !== productCountry) {
+                if (productCountry === "IT" && !["IT", "FR", "DE"].includes(userCountry)) {
+                    refundPct = 0.12;
+                } else if (productCountry === "GB") {
+                    refundPct = 0.15;
+                } else if (productCountry === "JP") {
+                    refundPct = 0.10;
+                }
+            }
+
+            const refundedPriceUsd = priceInUsd * (1 - refundPct);
+
+            if (userCountry === "US" && userCountry !== productCountry) {
+                if (refundedPriceUsd > 800) {
+                    dutyPct = 0.05;
+                }
+            }
+
+            const finalPriceUsd = refundedPriceUsd * (1 + dutyPct);
+            const finalPriceUserCurr = convertCurrency(finalPriceUsd, "USD", userCurrency);
+            const basePriceUserCurr = convertCurrency(basePrice, priceCurrency, userCurrency);
+            const refundAmountUserCurr = convertCurrency(priceInUsd * refundPct, "USD", userCurrency);
+            const dutyAmountUserCurr = convertCurrency(refundedPriceUsd * dutyPct, "USD", userCurrency);
+
+            return {
+                final_price: finalPriceUserCurr.toFixed(2),
+                base_price_user_curr: basePriceUserCurr.toFixed(2),
+                refund_amount: refundAmountUserCurr.toFixed(2),
+                duty_amount: dutyAmountUserCurr.toFixed(2)
+            };
+        }
+
+        document.getElementById('compare-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userCountry = document.getElementById('user_country').value;
+            const productName = document.getElementById('product_name').value;
+            const userCurrency = COUNTRY_CURRENCY_MAP[userCountry];
+
+            const productData = mockData.filter(item => item.product_name === productName);
+
+            if (productData.length === 0) return;
+
+            let resultsData = productData.map(item => {
+                const adj = calculateAdjustedPrice(item.price, item.country, userCountry, item.currency, userCurrency);
+                return {
+                    product_country: item.country,
+                    product_currency: item.currency,
+                    original_price: item.price.toFixed(2),
+                    base_price_converted: adj.base_price_user_curr,
+                    tax_refund: adj.refund_amount,
+                    import_duty: adj.duty_amount,
+                    final_price: adj.final_price,
+                    final_price_num: parseFloat(adj.final_price)
+                };
+            });
+
+            // Sort by lowest price
+            resultsData.sort((a, b) => a.final_price_num - b.final_price_num);
+
+            // Update UI
+            document.getElementById('results-title').textContent = `Price Comparison for ${productName}`;
+            document.getElementById('results-subtitle').innerHTML = `Your Country: <strong>${userCountry}</strong> | Display Currency: <strong>${userCurrency}</strong>`;
+
+            const cheapest = resultsData[0];
+            document.getElementById('best-deal').innerHTML = `
+                <h2>🏆 Best Deal Found 🏆</h2>
+                <p>Buy in <strong>${cheapest.product_country}</strong> for an estimated final cost of <strong>${userCurrency} ${cheapest.final_price}</strong></p>
+            `;
+
+            document.getElementById('th-converted-base').textContent = `Converted Base (${userCurrency})`;
+            document.getElementById('th-tax-refund').textContent = `Est. Tax Refund (${userCurrency})`;
+            document.getElementById('th-import-duty').textContent = `Est. Import Duty (${userCurrency})`;
+            document.getElementById('th-final-cost').textContent = `Final Cost (${userCurrency})`;
+
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = '';
+
+            resultsData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.product_country}</td>
+                    <td>${item.original_price} ${item.product_currency}</td>
+                    <td>${item.base_price_converted}</td>
+                    <td style="color: green;">-${item.tax_refund}</td>
+                    <td style="color: red;">+${item.import_duty}</td>
+                    <td><strong>${item.final_price}</strong></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('results-container').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

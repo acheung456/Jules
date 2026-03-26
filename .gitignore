@@ -25,4 +25,5 @@ wheels/
 flask.log
 *.html
 !templates/*.html
+!index.html
 http_server.log
