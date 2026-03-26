@@ -123,6 +123,22 @@
             margin-bottom: 2rem;
         }
 
+        #product-image-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #product-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         #results-title {
             font-family: 'Didot', serif;
             font-size: 1.5rem;
@@ -243,6 +259,9 @@
                 <select id="product_name" name="product_name" required>
                     <option value="Maya Short Down Jacket">Maya Short Down Jacket</option>
                     <option value="Bormes Gilet">Bormes Gilet</option>
+                    <option value="Montbeliard Short Down Jacket">Montbeliard Short Down Jacket</option>
+                    <option value="Grenoble Hintertux Ski Jacket">Grenoble Hintertux Ski Jacket</option>
+                    <option value="Logo Wool Beanie">Logo Wool Beanie</option>
                 </select>
             </div>
 
@@ -253,6 +272,10 @@
             <div class="results-header">
                 <h2 id="results-title"></h2>
                 <div id="results-subtitle"></div>
+            </div>
+
+            <div id="product-image-container">
+                <img id="product-image" src="" alt="Product Image">
             </div>
 
             <div class="best-deal-card" id="best-deal">
@@ -268,13 +291,27 @@
     <script>
         // Mock Database
         const mockData = [
-            { product_name: "Maya Short Down Jacket", country: "US", currency: "USD", price: 1850.00 },
-            { product_name: "Maya Short Down Jacket", country: "IT", currency: "EUR", price: 1250.00 },
-            { product_name: "Maya Short Down Jacket", country: "GB", currency: "GBP", price: 1150.00 },
-            { product_name: "Maya Short Down Jacket", country: "JP", currency: "JPY", price: 240000.00 },
-            { product_name: "Bormes Gilet", country: "US", currency: "USD", price: 1200.00 },
-            { product_name: "Bormes Gilet", country: "IT", currency: "EUR", price: 850.00 },
-            { product_name: "Bormes Gilet", country: "GB", currency: "GBP", price: 790.00 }
+            // Maya Short Down Jacket
+            { product_name: "Maya Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A5360068950999_M/dpx6uv/std/1024x1536/maya-short-down-jacket.jpg", country: "US", currency: "USD", price: 1850.00 },
+            { product_name: "Maya Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A5360068950999_M/dpx6uv/std/1024x1536/maya-short-down-jacket.jpg", country: "IT", currency: "EUR", price: 1250.00 },
+            { product_name: "Maya Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A5360068950999_M/dpx6uv/std/1024x1536/maya-short-down-jacket.jpg", country: "GB", currency: "GBP", price: 1150.00 },
+            { product_name: "Maya Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A5360068950999_M/dpx6uv/std/1024x1536/maya-short-down-jacket.jpg", country: "JP", currency: "JPY", price: 240000.00 },
+            // Bormes Gilet
+            { product_name: "Bormes Gilet", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/H20911A0014453333999_M/e9j0kq/std/1024x1536/bormes-gilet.jpg", country: "US", currency: "USD", price: 1200.00 },
+            { product_name: "Bormes Gilet", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/H20911A0014453333999_M/e9j0kq/std/1024x1536/bormes-gilet.jpg", country: "IT", currency: "EUR", price: 850.00 },
+            { product_name: "Bormes Gilet", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/H20911A0014453333999_M/e9j0kq/std/1024x1536/bormes-gilet.jpg", country: "GB", currency: "GBP", price: 790.00 },
+            // Montbeliard Short Down Jacket
+            { product_name: "Montbeliard Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A0014268950999_M/a3xw5z/std/1024x1536/montbeliard-short-down-jacket.jpg", country: "US", currency: "USD", price: 2150.00 },
+            { product_name: "Montbeliard Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A0014268950999_M/a3xw5z/std/1024x1536/montbeliard-short-down-jacket.jpg", country: "IT", currency: "EUR", price: 1550.00 },
+            { product_name: "Montbeliard Short Down Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20911A0014268950999_M/a3xw5z/std/1024x1536/montbeliard-short-down-jacket.jpg", country: "GB", currency: "GBP", price: 1400.00 },
+            // Grenoble Hintertux Ski Jacket
+            { product_name: "Grenoble Hintertux Ski Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20971A0003053071999_M/8zjw3v/std/1024x1536/hintertux-short-down-jacket.jpg", country: "US", currency: "USD", price: 2450.00 },
+            { product_name: "Grenoble Hintertux Ski Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20971A0003053071999_M/8zjw3v/std/1024x1536/hintertux-short-down-jacket.jpg", country: "IT", currency: "EUR", price: 1800.00 },
+            { product_name: "Grenoble Hintertux Ski Jacket", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20971A0003053071999_M/8zjw3v/std/1024x1536/hintertux-short-down-jacket.jpg", country: "GB", currency: "GBP", price: 1650.00 },
+            // Logo Wool Beanie
+            { product_name: "Logo Wool Beanie", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20913B00052A9327999_M/4yjw3v/std/1024x1536/wool-beanie.jpg", country: "US", currency: "USD", price: 345.00 },
+            { product_name: "Logo Wool Beanie", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20913B00052A9327999_M/4yjw3v/std/1024x1536/wool-beanie.jpg", country: "IT", currency: "EUR", price: 250.00 },
+            { product_name: "Logo Wool Beanie", image_url: "https://moncler-cdn.thron.com/delivery/public/image/moncler/I20913B00052A9327999_M/4yjw3v/std/1024x1536/wool-beanie.jpg", country: "GB", currency: "GBP", price: 230.00 }
         ];
 
         // Currency Mapping & Exchange Rates
@@ -368,6 +405,17 @@
             // Update UI
             document.getElementById('results-title').textContent = productName;
             document.getElementById('results-subtitle').innerHTML = `Refined for <strong>${userCountry}</strong> | ${userCurrency}`;
+
+            // Set image
+            const productImage = document.getElementById('product-image');
+            const productImageContainer = document.getElementById('product-image-container');
+            if (productData[0] && productData[0].image_url) {
+                productImage.src = productData[0].image_url;
+                productImage.alt = productName;
+                productImageContainer.style.display = 'block';
+            } else {
+                productImageContainer.style.display = 'none';
+            }
 
             const cheapest = resultsData[0];
             document.getElementById('best-deal').innerHTML = `
